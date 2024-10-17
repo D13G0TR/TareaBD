@@ -51,6 +51,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.lifecycle.livedata.ktx)
     val room_version = "2.6.1"
 
     implementation(libs.androidx.core.ktx)
