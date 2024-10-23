@@ -38,6 +38,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -83,21 +84,43 @@ class MainActivity : ComponentActivity() {
 
 
 @Composable
-fun List(viewModel: NombreViewModel){
-    val nombres by viewModel.getUltimosNombres().asFlow().collectAsState(initial = emptyList())
-    ListContent(nombres = nombres)
+fun List(viewModel: NombreViewModel) {
+    val nombres by viewModel.getUltimosNombres().observeAsState(emptyList())
+    val selectedName by viewModel.selectedName.observeAsState("")
+
+    ListContent(
+        nombres = nombres,
+        selectedName = selectedName,
+        onRandomize = { viewModel.seleccionarNombreAleatorio() }
+    )
 }
 
+
 @Composable
-fun ListContent(nombres : List<NombreEntity>){
-    Column{
+fun ListContent(
+    nombres: List<NombreEntity>,
+    selectedName: String,
+    onRandomize: () -> Unit
+) {
+    Column {
         Spacer(modifier = Modifier.height(40.dp))
-        Text("Prueba de base de datos ")
+        Text("Prueba de base de datos")
         nombres.forEach {
             Text(it.name)
         }
+
+        if (nombres.isNotEmpty()) {
+            Button(onClick = onRandomize) {
+                Text("Seleccionar nombre al azar")
+            }
+        }
+
+        if (selectedName.isNotEmpty()) {
+            Text("El nombre seleccionado es: $selectedName")
+        }
     }
 }
+
 
 @Composable
 fun AgregarNombre(viewModel: NombreViewModel){

@@ -11,6 +11,7 @@ class NombreViewModel(application: Application): AndroidViewModel(application) {
     private val repository: NombreRepository
     private val _nombres = MutableLiveData<List<NombreEntity>>()
 
+
     init {
         val database = NombreDataBase.getDatabase(application.applicationContext)
         repository = NombreRepository(database)
@@ -34,4 +35,16 @@ class NombreViewModel(application: Application): AndroidViewModel(application) {
             _nombres.value = nombres
         }
     }
+
+    private val _selectedName = MutableLiveData<String>()
+    val selectedName: LiveData<String> get() = _selectedName
+
+    fun seleccionarNombreAleatorio() {
+        _nombres.value?.let { nombres ->
+            if (nombres.isNotEmpty()) {
+                _selectedName.value = nombres.random().name
+            }
+        }
+    }
+
 }
